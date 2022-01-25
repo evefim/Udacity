@@ -43,7 +43,9 @@ This procedure is quite straightforward and it does not take into account anothe
 The training was performed using Udacity so there were some limitations on available disk space and total train time. 
 
 ### Reference experiment
-The reference experiment was performed using the config for a SSD Resnet 50 640x640 model from Tensorflow Object Detection API with the default .
+The reference experiment was performed using the config for a SSD Resnet 50 640x640 model from Tensorflow Object Detection API with the default config.
+
+The training metrics after 3000 training steps are shown below.
 
 | Precision/Recall | area | maxDets | Score |
 |-------|--------|--------|-------|
@@ -59,6 +61,17 @@ The reference experiment was performed using the config for a SSD Resnet 50 640x
  Average Recall     (AR) @[ IoU=0.50:0.95 ]| small | 100 | 0.000
  Average Recall     (AR) @[ IoU=0.50:0.95 ]| medium | 100 | 0.001
  Average Recall     (AR) @[ IoU=0.50:0.95 ]| large | 100 | 0.113
+ 
+ It can be seen that performance of this model extremely poor, although it is able to detect some large objects.
+ The reason is that this model hardly learns something, as can be seen from the graph showing loss during training.
+
+<img src="assets/loss_reference.png" height="300">
+
+There are two obvious weak points: 
+- the small batch size of 2 is used for model training (default value) 
+- the learning rate is not tailored to the problem
+
+So, before going deeper into augmentations and model architecture selection these points should be addressed.
 
 ### Improve on the reference
 This section should highlight the different strategies you adopted to improve your model. It should contain relevant figures and details of your findings.
