@@ -42,25 +42,27 @@ This procedure is quite straightforward and it does not take into account anothe
 ## Training
 The training was performed using Udacity so there were some limitations on available disk space and total train time. 
 
+### Metrics summary
+
+| Precision/Recall | area | maxDets | Reference | Experiment 1 |
+|-------|--------|--------|-------|--------|
+ Average Precision  (AP) @[ IoU=0.50:0.95] |    all | 100 | 0.000|0.217
+ Average Precision  (AP) @[ IoU=0.50 ]     |    all | 100 | 0.001|0.397
+ Average Precision  (AP) @[ IoU=0.75 ]     |    all | 100 | 0.000|0.200 
+ Average Precision  (AP) @[ IoU=0.50:0.95 ]| small | 100 | 0.000|0.100
+ Average Precision  (AP) @[ IoU=0.50:0.95 ]| medium | 100 | 0.002|0.505
+ Average Precision  (AP) @[ IoU=0.50:0.95 ]| large | 100 | 0.002|0.865
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all |  1 | 0.000|0.077
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all |  10 | 0.002|0.213
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all | 100 | 0.007|0.294
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]| small | 100 | 0.000|0.174
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]| medium | 100 | 0.001|0.607
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]| large | 100 | 0.113|0.893
+
 ### Reference experiment
 The reference experiment was performed using the config for a SSD Resnet 50 640x640 model from Tensorflow Object Detection API with the default config.
 
-The training metrics after 3000 training steps are shown below.
-
-| Precision/Recall | area | maxDets | Score |
-|-------|--------|--------|-------|
- Average Precision  (AP) @[ IoU=0.50:0.95] |    all | 100 | 0.000|
- Average Precision  (AP) @[ IoU=0.50 ]     |    all | 100 | 0.001|
- Average Precision  (AP) @[ IoU=0.75 ]     |    all | 100 | 0.000
- Average Precision  (AP) @[ IoU=0.50:0.95 ]| small | 100 | 0.000
- Average Precision  (AP) @[ IoU=0.50:0.95 ]| medium | 100 | 0.002
- Average Precision  (AP) @[ IoU=0.50:0.95 ]| large | 100 | 0.002
- Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all |  1 | 0.000
- Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all |  10 | 0.002
- Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all | 100 | 0.007
- Average Recall     (AR) @[ IoU=0.50:0.95 ]| small | 100 | 0.000
- Average Recall     (AR) @[ IoU=0.50:0.95 ]| medium | 100 | 0.001
- Average Recall     (AR) @[ IoU=0.50:0.95 ]| large | 100 | 0.113
+The training metrics after 3000 training steps are shown in the Table.
  
  It can be seen that performance of this model extremely poor, although it is able to detect some large objects.
  The reason is that this model hardly learns something, as can be seen from the graph showing loss during training.
@@ -73,8 +75,14 @@ There are two obvious weak points:
 
 So, before going deeper into augmentations and model architecture selection these points should be addressed.
 
-### Adam optimizer, exponentially decaying learning rate and increased batch size
-Three changes were made to a previous model:
+### Experiment 1 (Adam optimizer, exponentially decaying learning rate and increased batch size)
+The same SSD Resnet 50 640x640 model from Tensorflow Object Detection API was used with the following changes:
 - Adam optimizer is used
 - Exponentially decaying learning rate is employed: each 100 steps LR is multiplied by 0.95
 - Batch size is increased up to 10 (limited by GPU memory) 
+
+<img src="assets/gifs/experiment1_animation1.gif" height="300"><img src="assets/gifs/experiment1_animation2.gif" height="300"><img src="assets/gifs/experiment1_animation3.gif" height="300">
+
+### Experiment 2 (Data augmentations)
+
+### Experiment 3 (Size of input)
