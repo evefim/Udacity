@@ -33,7 +33,7 @@ The procedure implemented in the [Exploratory Data Analysis.ipynb](Exploratory%2
 3. Split this number also in proportion 85/15, so for validation we need to take 4 (0.15 * 27) files with cyclists and 11 (0.15 * 70) files without cyclists.
 This is done in order to have different files with cyclists for better generalization.
 4. Randomly permute lists of files with and without cyclists and take from this lists 4 and 11 files, respectively, for validation and remaining files for training.
-5. Continue step 4 until the total number of all types of objects is be split in proportion 85/15 for training and validation sets.
+5. Continue step 4 until the total number of all types of objects is split in proportion 85/15 for training and validation sets.
 6. Save filenames for validation set in validation.txt. 
 7. Run [create_splits.py](create_splits.py) script to perform real dataset split.
 
@@ -73,5 +73,8 @@ There are two obvious weak points:
 
 So, before going deeper into augmentations and model architecture selection these points should be addressed.
 
-### Improve on the reference
-This section should highlight the different strategies you adopted to improve your model. It should contain relevant figures and details of your findings.
+### Adam optimizer, exponentially decaying learning rate and increased batch size
+Three changes were made to a previous model:
+- Adam optimizer is used
+- Exponentially decaying learning rate is employed: each 100 steps LR is multiplied by 0.95
+- Batch size is increased up to 10 (limited by GPU memory) 
