@@ -43,6 +43,7 @@ This procedure is quite straightforward and it does not take into account anothe
 The training was performed using Udacity so there were some limitations on available disk space and total train time. 
 
 ### Metrics summary
+Here all metrics are summarized for the performed experiments, the detailed description of each experiments is given below. 
 
 | Precision/Recall | area | maxDets | Reference | Experiment 1 |
 |-------|--------|--------|-------|--------|
@@ -81,7 +82,24 @@ The same SSD Resnet 50 640x640 model from Tensorflow Object Detection API was us
 - Exponentially decaying learning rate is employed: each 100 steps LR is multiplied by 0.95
 - Batch size is increased up to 10 (limited by GPU memory) 
 
+The process of training is quite stable, and both training and validation losses are decreasing up to 3000 step.
+<img src="assets/loss_experiment1.png" height="300">
+
+At the same time object detection metrics start to decrease after 2500 step
+
+<img src="assets/precision_experiment1.png" height="300">
+<img src="assets/recall_experiment1.png" height="300">
+
+Thus, the model at 2500 step is chosen as the final model and metrics for this step are shown in the Table.
+
+In order to estimate quality of the model, some animations are created on the test files:
+
 <img src="assets/gifs/experiment1_animation1.gif" height="300"><img src="assets/gifs/experiment1_animation2.gif" height="300"><img src="assets/gifs/experiment1_animation3.gif" height="300">
+
+Some conclusions can be made based on test metrics and test animations:
+- Model is quite good at detecting and classifying large and medium objects in good weather conditions
+- It is hard for the model to detect small objects
+- In night conditions detection of medium poorly lit objects is not stable
 
 ### Experiment 2 (Data augmentations)
 
