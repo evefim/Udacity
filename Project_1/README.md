@@ -92,15 +92,49 @@ At the same time object detection metrics start to decrease after 2500 step
 
 Thus, the model at 2500 step is chosen as the final model and metrics for this step are shown in the Table.
 
-In order to estimate quality of the model, some animations are created on the test files:
-
-<img src="assets/gifs/experiment1_animation1.gif" height="300"><img src="assets/gifs/experiment1_animation2.gif" height="300"><img src="assets/gifs/experiment1_animation3.gif" height="300">
-
 Some conclusions can be made based on test metrics and test animations:
 - Model is quite good at detecting and classifying large and medium objects in good weather conditions
 - It is hard for the model to detect small objects
 - In night conditions detection of medium poorly lit objects is not stable
 
 ### Experiment 2 (Data augmentations)
+In the experiment 1 only random horizontal flip and random crop were used.
+In this experiment some more augmentations defined in [Tensoflow OD API](https://github.com/tensorflow/models/blob/master/research/object_detection/protos/preprocessor.proto) were used.
+The full list of used augmentations is given below:
+- random_horizontal_flip
+- random_distort_color
+- random_adjust_brightness
+- random_adjust_contrast
+- random_jitter_boxes
+- ssd_random_crop.
 
-### Experiment 3 (Size of input)
+Pipeline config used for training is [here](experiments/experiment2/pipeline_new.config).
+
+The process of training is quite stable, and both training and validation losses are decreasing up to 4000 step.
+<img src="assets/loss_experiment2.png" height="300">
+
+At the same time object detection metrics start to decrease after 3000 step, so model starts to overfeat on training data.
+
+<img src="assets/precision_experiment2.png" height="300">
+<img src="assets/recall_experiment2.png" height="300">
+
+Thus, the model at 3000 step is chosen as the final model and metrics for this step are shown in the Table. 
+
+The following conclusions can be made based on animations and metrics:
+
+- Using augmentations allows longer model training without overfitting on training data
+- Some metrics increase (e.g. precision/recall for medium objects) which results in better detection
+- This model better detects pedestrians
+- Surprisingly, this model works worse at night, so augmentations should be more carefully selected
+
+### Experiment 3 (Size of model input)
+
+### Test animations
+#### Segment 1
+<img src="assets/gifs/experiment1_animation1.gif" height="300"><img src="assets/gifs/experiment2_animation1.gif" height="300">
+
+#### Segment 2
+<img src="assets/gifs/experiment1_animation2.gif" height="300"><img src="assets/gifs/experiment2_animation2.gif" height="300">
+
+#### Segment 3
+<img src="assets/gifs/experiment1_animation3.gif" height="300"><img src="assets/gifs/experiment2_animation3.gif" height="300">
