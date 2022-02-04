@@ -45,7 +45,7 @@ The training was performed using Udacity so there were some limitations on avail
 ### Metrics summary
 Here all metrics are summarized for the performed experiments, the detailed description of each experiments is given below. 
 
-| Precision/Recall | area | maxDets | Reference | Experiment 1 | Experiment 2 | Experiment3 
+| Precision/Recall | area | maxDets | Reference | Exp. 1 | Exp. 2 | Exp. 3 
 |-------|--------|--------|-------|--------|---------|----------|
  Average Precision  (AP) @[ IoU=0.50:0.95] |    all | 100 | 0.000|0.217 | 0.228 | **0.282**
  Average Precision  (AP) @[ IoU=0.50 ]     |    all | 100 | 0.001|0.397 | 0.423 | **0.540**
@@ -61,7 +61,7 @@ Here all metrics are summarized for the performed experiments, the detailed desc
  Average Recall     (AR) @[ IoU=0.50:0.95 ]| large | 100 | 0.113|**0.893** | 0.877 | 0.733
 
 ### Reference experiment
-The reference experiment was performed using the config for a SSD Resnet 50 640x640 model from Tensorflow Object Detection API with the default config.
+The reference experiment was performed using the config for a SSD Resnet 50 640x640 model from Tensorflow Object Detection API with the [default config](experiments/reference/pipeline_new.config).
 
 The training metrics after 3000 training steps are shown in the Table.
  
@@ -82,10 +82,13 @@ The same SSD Resnet 50 640x640 model from Tensorflow Object Detection API was us
 - Exponentially decaying learning rate is employed: each 100 steps LR is multiplied by 0.95
 - Batch size is increased up to 10 (limited by GPU memory) 
 
+The full configuration file is available [here](experiments/experiment1/pipeline_new.config).
 The process of training is quite stable, and both training and validation losses are decreasing up to 3000 step.
+Metrics at different time steps are given in the [file](experiments/experiment1/result.txt).
+
 <img src="assets/loss_experiment1.png" height="300">
 
-At the same time object detection metrics start to decrease after 2500 step
+At the same time object detection metrics start to decrease after 2500 step.
 
 <img src="assets/precision_experiment1.png" height="300">
 <img src="assets/recall_experiment1.png" height="300">
@@ -98,7 +101,7 @@ Some conclusions can be made based on test metrics and test animations:
 - In night conditions detection of medium poorly lit objects is not stable
 
 ### Experiment 2 (Data augmentations)
-In the experiment 1 only random horizontal flip and random crop were used.
+In the experiment 1 only random horizontal flip and random crop were used for augmentations.
 In this experiment some more augmentations defined in [Tensoflow OD API](https://github.com/tensorflow/models/blob/master/research/object_detection/protos/preprocessor.proto) were used.
 The full list of used augmentations is given below:
 - random_horizontal_flip
@@ -111,6 +114,8 @@ The full list of used augmentations is given below:
 Pipeline config used for training is [here](experiments/experiment2/pipeline_new.config).
 
 The process of training is quite stable, and both training and validation losses are decreasing up to 4000 step.
+Metrics at different time steps are given in the [file](experiments/experiment2/result.txt).
+
 <img src="assets/loss_experiment2.png" height="300">
 
 At the same time object detection metrics start to decrease after 3000 step, so model starts to overfeat on training data.
