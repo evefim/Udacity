@@ -45,20 +45,20 @@ The training was performed using Udacity so there were some limitations on avail
 ### Metrics summary
 Here all metrics are summarized for the performed experiments, the detailed description of each experiments is given below. 
 
-| Precision/Recall | area | maxDets | Reference | Experiment 1 | Experiment 2
-|-------|--------|--------|-------|--------|---------|
- Average Precision  (AP) @[ IoU=0.50:0.95] |    all | 100 | 0.000|0.217 | 0.228
- Average Precision  (AP) @[ IoU=0.50 ]     |    all | 100 | 0.001|0.397 | 0.423
- Average Precision  (AP) @[ IoU=0.75 ]     |    all | 100 | 0.000|0.200 | 0.212
- Average Precision  (AP) @[ IoU=0.50:0.95 ]| small | 100 | 0.000|0.100 | 0.101
- Average Precision  (AP) @[ IoU=0.50:0.95 ]| medium | 100 | 0.002|0.505 | 0.541
- Average Precision  (AP) @[ IoU=0.50:0.95 ]| large | 100 | 0.002|0.865 | 0.854
- Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all |  1 | 0.000|0.077 | 0.074 
- Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all |  10 | 0.002|0.213 | 0.229
- Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all | 100 | 0.007|0.294 | 0.305
- Average Recall     (AR) @[ IoU=0.50:0.95 ]| small | 100 | 0.000|0.174 | 0.185
- Average Recall     (AR) @[ IoU=0.50:0.95 ]| medium | 100 | 0.001|0.607 | 0.602
- Average Recall     (AR) @[ IoU=0.50:0.95 ]| large | 100 | 0.113|0.893 | 0.877
+| Precision/Recall | area | maxDets | Reference | Experiment 1 | Experiment 2 | Experiment3 
+|-------|--------|--------|-------|--------|---------|----------|
+ Average Precision  (AP) @[ IoU=0.50:0.95] |    all | 100 | 0.000|0.217 | 0.228 | **0.282**
+ Average Precision  (AP) @[ IoU=0.50 ]     |    all | 100 | 0.001|0.397 | 0.423 | **0.540**
+ Average Precision  (AP) @[ IoU=0.75 ]     |    all | 100 | 0.000|0.200 | 0.212 | **0.257**
+ Average Precision  (AP) @[ IoU=0.50:0.95 ]| small | 100 | 0.000|0.100 | 0.101 | **0.181**
+ Average Precision  (AP) @[ IoU=0.50:0.95 ]| medium | 100 | 0.002|0.505 | 0.541 | **0.548**
+ Average Precision  (AP) @[ IoU=0.50:0.95 ]| large | 100 | 0.002|**0.865** | 0.854 | 0.680
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all |  1 | 0.000|**0.077** | 0.074 | 0.047
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all |  10 | 0.002|0.213 | 0.229 | **0.243**
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all | 100 | 0.007|0.294 | 0.305 | **0.356**
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]| small | 100 | 0.000|0.174 | 0.185 | **0.266**
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]| medium | 100 | 0.001|0.607 | 0.602 | **0.624**
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]| large | 100 | 0.113|**0.893** | 0.877 | 0.733
 
 ### Reference experiment
 The reference experiment was performed using the config for a SSD Resnet 50 640x640 model from Tensorflow Object Detection API with the default config.
