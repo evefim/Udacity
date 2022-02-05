@@ -6,8 +6,68 @@ This task is very important for self-driving cars, because images taken by camer
 
 The goal of this project is to train 3-class Object detection model which is able to identify position of a car, a pedestrian or a cyclist based on Waymo Open Dataset using Tensorflow Object Detection API.
 
+## Instructions
+1. Download the dataset using [download_process.py](download_process.py) script.
+```console
+python download_process.py --data_dir data/waymo --size 100
+```
+2. Create train, val, test splits by running [create_splits.py](create_splits.py) script.
+```console
+python create_splits.py --data-dir data/waymo
+```
+This script splits the whole dataset into train, validation and testing datasets.
+To make training and validation splits balanced this script needs file validation.txt which is produced by [Exploratory Data Analysis.ipynb](Exploratory%20Data%20Analysis.ipynb) notebook.
+
+3. Download the pretrained model to experiments/pretrained_model from [Tensorflow Object Detection model zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md).
+```console
+cd experiments
+mkdir pretrained_model
+cd pretrained_model
+wget http://download.tensorflow.org/models/object_detection/tf2/20200711/ssd_resnet50_v1_fpn_640x640_coco17_tpu-8.tar.gz
+tar -xzf ssd_resnet50_v1_fpn_640x640_coco17_tpu-8.tar.gz
+cd ../..
+```
+
+4. Download corresponding pipeline.config from [this page](https://github.com/tensorflow/models/tree/master/research/object_detection/configs/tf2). In downloaded .config several changes must be made:
+- In the train_config section fine_tune_checkpoint_type must be set to "detection" instead of "classification"
+- In the train_config section use_bfloat16 must be set to false
+- File must be renamed to pipeline.config
+
+The configuration file pipeline.config should be edited by [edit_config.py](edit_config.py) script to include correct values for training and validation dataset and batch size.
+```console
+python edit_config.py --train_dir data/waymo/train/ --eval_dir data/waymo/val/ --batch_size 2 --checkpoint experiments/pretrained_model/ssd_resnet50_v1_fpn_640x640_coco17_tpu-8/checkpoint/ckpt-0 --label_map experiments/label_map.pbtxt
+```
+This command will produce pipeline_new.config file with correct input.
+
+5. Create new folder for the experiment and move created  pipeline_new.config to this folder.
+```console
+mkdir experiments/experiment1
+mv pipeline_new.config experiments/experiment1
+```
+
+6. Launch training using script [model_main_tf2.py](experiments/model_main_tf2.py)
+```console
+python experiments/model_main_tf2.py --model_dir=experiments/experiment1 --pipeline_config_path=experiments/experiment1/pipeline_new.config
+```
+To monitor the training, you can launch a tensorboard instance by running `python -m tensorboard.main --logdir experiments/reference/`.
+
+7. Once the training is finished, launch the evaluation process using the same script
+```console
+python experiments/model_main_tf2.py --model_dir=experiments/experiment1 --pipeline_config_path=experiments/experiment1/pipeline_new.config --checkpoint_dir=experiments/experiment1
+```
+8. Export the trained model
+```console
+python experiments/exporter_main_v2.py --input_type image_tensor --pipeline_config_path experiments/experiment1/pipeline_new.config --trained_checkpoint_dir experiments/experiment1/ --output_directory experiments/experiment1/exported/
+```
+
+This should create a new folder `experiments/experiment1/exported/saved_model`. You can read more about the Tensorflow SavedModel format [here](https://www.tensorflow.org/guide/saved_model)
+
+9. Finally, you can create a video of your model's inferences for any tf record file. To do so, run the following command:
+```console
+python inference_video.py --labelmap_path label_map.pbtxt --model_path experiments/experiment1/exported/saved_model --tf_record_path data/waymo/test/segment-12200383401366682847_2552_140_2572_140_with_camera_labels.tfrecord --config_path experiments/experiment1/pipeline_new.config --output_path animation.gif
+```
 ## Dataset
-The dataset consists of 100 tfrecord files from the [Waymo Open dataset](https://waymo.com/open/). The files can be downloaded directly from the website as tar files or from the [Google Cloud Bucket](https://console.cloud.google.com/storage/browser/waymo_open_dataset_v_1_2_0_individual_files/) as individual tf records. 
+The dataset consists of 100 tfrecord files from the [Waymo Open dataset](https://waymo.com/open/). The files can be downloaded directly from the website as tar files or from the [Google Cloud Bucket](https://console.cloud.google.com/storage/browser/waymo_open_dataset_v_1_2_0_individual_files/) as individual tf records.
 
 ### Dataset analysis
 The dataset analysis is given in the Jupyter notebook [Exploratory Data Analysis.ipynb](Exploratory%20Data%20Analysis.ipynb)
@@ -39,7 +99,7 @@ This is done in order to have different files with cyclists for better generaliz
 
 This procedure is quite straightforward and it does not take into account another important factors, for example, diversity of weather and/or daytime conditions, but it tries to deal with imbalanced dataset. Another idea is that different ration between training and validation can be used (for example, 90/10), to have more data for training.
 
-## Training
+## Model training
 The training was performed on 1 Tesla K80 using Udacity workspace so there were some limitations on available disk space (3 GB) and total train time. 
 
 ### Metrics summary
