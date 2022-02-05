@@ -44,6 +44,7 @@ The training was performed on 1 Tesla K80 using Udacity workspace so there were 
 
 ### Metrics summary
 Here all metrics are summarized for the performed experiments, the detailed description of each experiments is given below. 
+The best results are marked bold.
 
 | Precision/Recall | area | maxDets | Reference | Exp. 1 | Exp. 2 | Exp. 3 | Exp. 4
 |-------|--------|--------|-------|--------|---------|----------|---------|
@@ -104,6 +105,7 @@ Some conclusions can be made based on test metrics and test animations:
 The same SSD Resnet 50 640x640 model from Tensorflow Object Detection API was used.
 In the experiment 1 only random horizontal flip and random crop were used for augmentations.
 In this experiment some more augmentations defined in [Tensoflow OD API](https://github.com/tensorflow/models/blob/master/research/object_detection/protos/preprocessor.proto) were used.
+Some images with augmentations can be seen in 
 The full list of used augmentations is given below:
 - random_horizontal_flip
 - random_distort_color
