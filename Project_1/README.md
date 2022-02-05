@@ -40,7 +40,7 @@ This is done in order to have different files with cyclists for better generaliz
 This procedure is quite straightforward and it does not take into account another important factors, for example, diversity of weather and/or daytime conditions, but it tries to deal with imbalanced dataset. Another idea is that different ration between training and validation can be used (for example, 90/10), to have more data for training.
 
 ## Training
-The training was performed using Udacity so there were some limitations on available disk space and total train time. 
+The training was performed on 1 Tesla K80 using Udacity workspace so there were some limitations on available disk space (3 GB) and total train time. 
 
 ### Metrics summary
 Here all metrics are summarized for the performed experiments, the detailed description of each experiments is given below. 
@@ -101,6 +101,7 @@ Some conclusions can be made based on test metrics and test animations:
 - In night conditions detection of medium poorly lit objects is not stable
 
 ### Experiment 2 (Data augmentations)
+The same SSD Resnet 50 640x640 model from Tensorflow Object Detection API was used.
 In the experiment 1 only random horizontal flip and random crop were used for augmentations.
 In this experiment some more augmentations defined in [Tensoflow OD API](https://github.com/tensorflow/models/blob/master/research/object_detection/protos/preprocessor.proto) were used.
 The full list of used augmentations is given below:
@@ -133,6 +134,60 @@ The following conclusions can be made based on animations and metrics:
 - Surprisingly, this model works worse at night, so augmentations should be more carefully selected
 
 ### Experiment 3 (Size of model input)
+The SSD Resnet 50 1024x1024 model from Tensorflow Object Detection API was used with the same augmentations as in the Experiment 2.
+Due to a larger input size and larger model size, the batch size was decreased to 4.
+
+Pipeline config used for training is [here](experiments/experiment3/pipeline_new.config).
+
+The process of training is quite stable, and both training and validation losses are decreasing up to 4500 step.
+Metrics at different time steps are given in the [file](experiments/experiment3/result.txt).
+
+<img src="assets/loss_experiment3.png" height="300">
+
+At the same time object detection metrics start to saturate after 4000 step, so training process was stopped at this point.
+
+<img src="assets/precision_experiment3.png" height="300">
+<img src="assets/recall_experiment3.png" height="300">
+
+Thus, the model at 4000 step is chosen as the final model and metrics for this step are shown in the Table. 
+
+The following conclusions can be made based on animations and metrics:
+
+- Using larger input size allows longer model training without overfitting on training data
+- Some metrics increase (e.g. precision/recall for medium objects) which results in better detection
+- This model better detects pedestrians
+- Surprisingly, this model has more false detections, seen e.g. in the animation for the segment 3. 
+
+### Experiment 4 (Different architecture)
+For comparison, the Facter R-CNN Resnet 50 1024x1024 model from Tensorflow Object Detection API was used with the same augmentations as in the Experiment 2.
+Due to a larger input size and larger model size, the batch size was decreased to 4.
+
+Pipeline config used for training is [here](experiments/experiment4/pipeline_new.config).
+
+The process of training is quite stable but very noisy, and both training and validation losses are decreasing up to 3500 step.
+Metrics at different time steps are given in the [file](experiments/experiment4/result.txt).
+
+<img src="assets/loss_experiment4.png" height="300">
+
+At the same time object detection metrics start to saturate after 3500 step, so training process was stopped at this point.
+
+<img src="assets/precision_experiment4.png" height="300">
+<img src="assets/recall_experiment4.png" height="300">
+
+Thus, the model at 3000 step is chosen as the final model and metrics for this step are shown in the Table. 
+
+The results and conclusions are similar to SSD 1024x1024 can be made based on animations and metrics:
+
+- Using larger input size allows longer model training without overfitting on training data
+- Some metrics increase (e.g. precision/recall for medium objects) which results in better detection
+- This model better detects pedestrians
+- Surprisingly, this model has more false detections, seen e.g. in the animation for the segment 3.
+
+### Other experiments
+Some other architectures were tested, but have not lead to meaningful results:
+- EfficientDet D1 640x640 - results were worse than in the Experiment 2 (SSD 640x640). Possibly, another optimizer/augmentations should be used.
+- EfficientDet D4 1024x1024 - the batch size was reduced to 2, loss during training was wery noisy.
+- SSD Resnet 152 1024x1024 - the training process was unstable. Possibly, another optimizer/augmentations should be used.
 
 ### Test animations
 #### Segment 1
