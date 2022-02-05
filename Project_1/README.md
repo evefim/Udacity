@@ -45,20 +45,20 @@ The training was performed using Udacity so there were some limitations on avail
 ### Metrics summary
 Here all metrics are summarized for the performed experiments, the detailed description of each experiments is given below. 
 
-| Precision/Recall | area | maxDets | Reference | Exp. 1 | Exp. 2 | Exp. 3 
-|-------|--------|--------|-------|--------|---------|----------|
- Average Precision  (AP) @[ IoU=0.50:0.95] |    all | 100 | 0.000|0.217 | 0.228 | **0.282**
- Average Precision  (AP) @[ IoU=0.50 ]     |    all | 100 | 0.001|0.397 | 0.423 | **0.540**
- Average Precision  (AP) @[ IoU=0.75 ]     |    all | 100 | 0.000|0.200 | 0.212 | **0.257**
- Average Precision  (AP) @[ IoU=0.50:0.95 ]| small | 100 | 0.000|0.100 | 0.101 | **0.181**
- Average Precision  (AP) @[ IoU=0.50:0.95 ]| medium | 100 | 0.002|0.505 | 0.541 | **0.548**
- Average Precision  (AP) @[ IoU=0.50:0.95 ]| large | 100 | 0.002|**0.865** | 0.854 | 0.680
- Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all |  1 | 0.000|**0.077** | 0.074 | 0.047
- Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all |  10 | 0.002|0.213 | 0.229 | **0.243**
- Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all | 100 | 0.007|0.294 | 0.305 | **0.356**
- Average Recall     (AR) @[ IoU=0.50:0.95 ]| small | 100 | 0.000|0.174 | 0.185 | **0.266**
- Average Recall     (AR) @[ IoU=0.50:0.95 ]| medium | 100 | 0.001|0.607 | 0.602 | **0.624**
- Average Recall     (AR) @[ IoU=0.50:0.95 ]| large | 100 | 0.113|**0.893** | 0.877 | 0.733
+| Precision/Recall | area | maxDets | Reference | Exp. 1 | Exp. 2 | Exp. 3 | Exp. 4
+|-------|--------|--------|-------|--------|---------|----------|---------|
+ Average Precision  (AP) @[ IoU=0.50:0.95] |    all | 100 | 0.000|0.217 | 0.228 | **0.282** | 0.273
+ Average Precision  (AP) @[ IoU=0.50 ]     |    all | 100 | 0.001|0.397 | 0.423 | **0.540** | 0.534
+ Average Precision  (AP) @[ IoU=0.75 ]     |    all | 100 | 0.000|0.200 | 0.212 | **0.257** | 0.236
+ Average Precision  (AP) @[ IoU=0.50:0.95 ]| small | 100 | 0.000|0.100 | 0.101 | **0.181** | 0.156
+ Average Precision  (AP) @[ IoU=0.50:0.95 ]| medium | 100 | 0.002|0.505 | 0.541 | 0.548 | **0.568**
+ Average Precision  (AP) @[ IoU=0.50:0.95 ]| large | 100 | 0.002|**0.865** | 0.854 | 0.680 | 0.748
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all |  1 | 0.000|**0.077** | 0.074 | 0.047 | 0.049
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all |  10 | 0.002|0.213 | 0.229 | **0.243** | 0.235
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]|  all | 100 | 0.007|0.294 | 0.305 | **0.356** | 0.347
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]| small | 100 | 0.000|0.174 | 0.185 | **0.266** | 0.249
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]| medium | 100 | 0.001|0.607 | 0.602 | 0.624 | **0.632**
+ Average Recall     (AR) @[ IoU=0.50:0.95 ]| large | 100 | 0.113|**0.893** | 0.877 | 0.733 | 0.785
 
 ### Reference experiment
 The reference experiment was performed using the config for a SSD Resnet 50 640x640 model from Tensorflow Object Detection API with the [default config](experiments/reference/pipeline_new.config).
@@ -136,10 +136,19 @@ The following conclusions can be made based on animations and metrics:
 
 ### Test animations
 #### Segment 1
-<img src="assets/gifs/experiment1_animation1.gif" height="300"><img src="assets/gifs/experiment2_animation1.gif" height="300">
 
+| | |
+|--|--|
+|Exp. 1. SSD 640x640 <br /> <img src="assets/gifs/experiment1_animation1.gif" height="300">|Exp. 2. SSD 640x640 + augmentations <br /><img src="assets/gifs/experiment2_animation1.gif" height="300">|
+|Exp. 3. SSD 1024x1024 + augmentations<br /><img src="assets/gifs/experiment4_animation1.gif" height="300">|Exp. 4. Faster R-CNN 1024x1024 + augmentations<br /><img src="assets/gifs/experiment4_animation1.gif" height="300">|
 #### Segment 2
-<img src="assets/gifs/experiment1_animation2.gif" height="300"><img src="assets/gifs/experiment2_animation2.gif" height="300">
+| | |
+|--|--|
+|Exp. 1. SSD 640x640 <br /> <img src="assets/gifs/experiment1_animation2.gif" height="300">|Exp. 2. SSD 640x640 + augmentations <br /><img src="assets/gifs/experiment2_animation2.gif" height="300">|
+|Exp. 3. SSD 1024x1024 + augmentations<br /><img src="assets/gifs/experiment4_animation2.gif" height="300">|Exp. 4. Faster R-CNN 1024x1024 + augmentations<br /><img src="assets/gifs/experiment4_animation2.gif" height="300">|
 
 #### Segment 3
-<img src="assets/gifs/experiment1_animation3.gif" height="300"><img src="assets/gifs/experiment2_animation3.gif" height="300">
+| | |
+|--|--|
+|Exp. 1. SSD 640x640 <br /> <img src="assets/gifs/experiment1_animation3.gif" height="300">|Exp. 2. SSD 640x640 + augmentations <br /><img src="assets/gifs/experiment2_animation3.gif" height="300">|
+|Exp. 3. SSD 1024x1024 + augmentations<br /><img src="assets/gifs/experiment4_animation3.gif" height="300">|Exp. 4. Faster R-CNN 1024x1024 + augmentations<br /><img src="assets/gifs/experiment4_animation3.gif" height="300">|
