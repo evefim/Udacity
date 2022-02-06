@@ -7,62 +7,92 @@ This task is very important for self-driving cars, because images taken by camer
 The goal of this project is to train 3-class Object detection model which is able to identify position of a car, a pedestrian or a cyclist based on Waymo Open Dataset using Tensorflow Object Detection API.
 
 ## Instructions
-1. Download the dataset using [download_process.py](download_process.py) script.
+1. Clone the git repository to your local machine and go to the Project 1 directory 
+```console
+git clone https://github.com/evefim/Udacity_Self-Driving_car.git
+cd Self-driving_car/Project_1
+```
+
+2. In order to run the project the docker container is used. Build the image and run the container using the following commands:
+```console
+cd build
+docker build -t project-dev -f Dockerfile .
+docker run --gpus all -v <local path to repository>/Self-driving_car/Project_1/:/app/project/ --network=host -ti project-dev bash
+```
+In my case local path to repository is ```/home/evgeny/udacity```.
+
+When the container is started go to the ```/app/project``` directory
+```console
+cd /app/project
+```
+
+3. Download the dataset using [download_process.py](download_process.py) script.
 ```console
 python download_process.py --data_dir data/waymo --size 100
 ```
-2. Create train, val, test splits by running [create_splits.py](create_splits.py) script.
+This script will create ```train```, ```val```, ```training_and_validation``` and ```test``` directories, download 100 tfrecord files and put 3 of them to  ```test``` folder and remaining 97 files to ```training_and_validation``` folder.
+
+4. These 97 files should be splitted between ```train``` and ```val``` folders by running [create_splits.py](create_splits.py) script.
 ```console
 python create_splits.py --data-dir data/waymo
 ```
-This script splits the whole dataset into train, validation and testing datasets.
+
 To make training and validation splits balanced this script needs file validation.txt which is produced by [Exploratory Data Analysis.ipynb](Exploratory%20Data%20Analysis.ipynb) notebook.
 
-3. Download the pretrained model to experiments/pretrained_model from [Tensorflow Object Detection model zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md).
+5. Download the pretrained models to experiments/pretrained_model from [Tensorflow Object Detection model zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md).
+In this case three models are used: ssd_resnet50_v1_fpn_640x640, ssd_resnet50_v1_fpn_1024x1024, faster_rcnn_resnet50_v1_1024x1024.
 ```console
 cd experiments
 mkdir pretrained_model
 cd pretrained_model
 wget http://download.tensorflow.org/models/object_detection/tf2/20200711/ssd_resnet50_v1_fpn_640x640_coco17_tpu-8.tar.gz
 tar -xzf ssd_resnet50_v1_fpn_640x640_coco17_tpu-8.tar.gz
+wget http://download.tensorflow.org/models/object_detection/tf2/20200711/ssd_resnet50_v1_fpn_1024x1024_coco17_tpu-8.tar.gz
+tar -xzf ssd_resnet50_v1_fpn_1024x1024_coco17_tpu-8.tar.gz
+wget http://download.tensorflow.org/models/object_detection/tf2/20200711/faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8.tar.gz
+tar -xzf faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8.tar.gz
 cd ../..
 ```
 
-4. Download corresponding pipeline.config from [this page](https://github.com/tensorflow/models/tree/master/research/object_detection/configs/tf2). In downloaded .config several changes must be made:
-- In the train_config section fine_tune_checkpoint_type must be set to "detection" instead of "classification"
-- In the train_config section use_bfloat16 must be set to false
-- File must be renamed to pipeline.config
+6. Download corresponding pipeline.config from [this page](https://github.com/tensorflow/models/tree/master/research/object_detection/configs/tf2). In downloaded .config several changes must be made:
+- In the ```train_config``` section ```fine_tune_checkpoint_type``` must be set to ```"detection"``` instead of ```"classification"```
+- In the ```train_config``` section ```use_bfloat16``` must be set to ```false```
+- File must be renamed to ```pipeline.config```
 
-The configuration file pipeline.config should be edited by [edit_config.py](edit_config.py) script to include correct values for training and validation dataset and batch size.
+The configuration file ```pipeline.config``` should be edited by [edit_config.py](edit_config.py) script to include correct values for training and validation dataset and batch size.
 ```console
 python edit_config.py --train_dir data/waymo/train/ --eval_dir data/waymo/val/ --batch_size 2 --checkpoint experiments/pretrained_model/ssd_resnet50_v1_fpn_640x640_coco17_tpu-8/checkpoint/ckpt-0 --label_map experiments/label_map.pbtxt
 ```
-This command will produce pipeline_new.config file with correct input.
+This command will produce ```pipeline_new.config``` file with correct input.
+Directories in the ```experiments``` folder already contain ```pipeline_new.config``` files for performed experiments. 
 
-5. Create new folder for the experiment and move created  pipeline_new.config to this folder.
+7. Create new folder for the experiment and move created  pipeline_new.config to this folder.
 ```console
 mkdir experiments/experiment1
 mv pipeline_new.config experiments/experiment1
 ```
 
-6. Launch training using script [model_main_tf2.py](experiments/model_main_tf2.py)
+8. Launch training using script [model_main_tf2.py](experiments/model_main_tf2.py)
 ```console
 python experiments/model_main_tf2.py --model_dir=experiments/experiment1 --pipeline_config_path=experiments/experiment1/pipeline_new.config
 ```
-To monitor the training, you can launch a tensorboard instance by running `python -m tensorboard.main --logdir experiments/reference/`.
+To monitor the training, you can launch a tensorboard instance by running 
+```console
+python -m tensorboard.main --logdir experiments/experiment1
+```
 
-7. Once the training is finished, launch the evaluation process using the same script
+9. Once the training is finished, launch the evaluation process using the same script
 ```console
 python experiments/model_main_tf2.py --model_dir=experiments/experiment1 --pipeline_config_path=experiments/experiment1/pipeline_new.config --checkpoint_dir=experiments/experiment1
 ```
-8. Export the trained model
+10. Export the trained model
 ```console
 python experiments/exporter_main_v2.py --input_type image_tensor --pipeline_config_path experiments/experiment1/pipeline_new.config --trained_checkpoint_dir experiments/experiment1/ --output_directory experiments/experiment1/exported/
 ```
 
-This should create a new folder `experiments/experiment1/exported/saved_model`. You can read more about the Tensorflow SavedModel format [here](https://www.tensorflow.org/guide/saved_model)
+This should create a new folder ```experiments/experiment1/exported/saved_model```. You can read more about the Tensorflow SavedModel format [here](https://www.tensorflow.org/guide/saved_model)
 
-9. Finally, you can create a video of your model's inferences for any tf record file. To do so, run the following command:
+11. Finally, you can create a video of your model's inferences for any tf record file. To do so, run the following command:
 ```console
 python inference_video.py --labelmap_path label_map.pbtxt --model_path experiments/experiment1/exported/saved_model --tf_record_path data/waymo/test/segment-12200383401366682847_2552_140_2572_140_with_camera_labels.tfrecord --config_path experiments/experiment1/pipeline_new.config --output_path animation.gif
 ```
@@ -75,9 +105,9 @@ The dataset analysis is given in the Jupyter notebook [Exploratory Data Analysis
 Some conclusions are summarized below:
 - There are different weather, daytime and road conditions. This is good from the model generalization ability point of view.  
 - Three classes (a car, a pedestrian and a cyclist) are very imbalanced. In 1937 images there are 34855 cars, 10423 pedestrians and 270 cyclists. This fact makes cyclists very difficult to detect (or in other words to teach the model to identify them).
-- One image may contain a lot of detections, in the given subset there are up to 75 bounding boxes in a single image. Some images are empty, which is also valid event
+- One image may contain a lot of detections, in the given subset there are up to 75 bounding boxes in a single image. Some images are empty, which is also valid event.
 - The scale of objects bounding boxes is also very different from very huge (for example, very long bus in a foreground) to tiny pedestrians in the distance.
-- There are also some errors in dataset (not many though): wrong bounding boxes, objects without bounding box
+- There are also some errors in dataset (not many though): wrong bounding boxes, objects without bounding boxes.
 
 ### Cross validation
 Dataset should be split into 3 subsets: for training (train), validation (val) and testing (test).
