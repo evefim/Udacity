@@ -34,13 +34,13 @@ This script will create ```train```, ```val```, ```training_and_validation``` an
 
 4. These 97 files should be splitted between ```train``` and ```val``` folders by running [create_splits.py](create_splits.py) script.
 ```console
-python create_splits.py --data-dir data/waymo
+python create_splits.py --data_dir data/waymo
 ```
 
-To make training and validation splits balanced this script needs file validation.txt which is produced by [Exploratory Data Analysis.ipynb](Exploratory%20Data%20Analysis.ipynb) notebook.
+To make training and validation splits balanced this script needs file ```validation.txt``` which is produced by [Exploratory Data Analysis.ipynb](Exploratory%20Data%20Analysis.ipynb) notebook. The files in ```training_and_validation``` are split in proportion 85/15 between ```train``` and ```val``` directories. More detailed description of the algorithm can be found in Cross validation section below. The ```validation.txt``` file is in the repository, but it can be created from scratch with different split by running [Exploratory Data Analysis.ipynb](Exploratory%20Data%20Analysis.ipynb) notebook.
 
-5. Download the pretrained models to experiments/pretrained_model from [Tensorflow Object Detection model zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md).
-In this case three models are used: ssd_resnet50_v1_fpn_640x640, ssd_resnet50_v1_fpn_1024x1024, faster_rcnn_resnet50_v1_1024x1024.
+5. Download the pretrained models to the ```experiments/pretrained_model``` folder from [Tensorflow Object Detection model zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md).
+In this case three models are used: ```ssd_resnet50_v1_fpn_640x640```, ```ssd_resnet50_v1_fpn_1024x1024```, ```faster_rcnn_resnet50_v1_1024x1024```.
 ```console
 cd experiments
 mkdir pretrained_model
@@ -54,7 +54,13 @@ tar -xzf faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8.tar.gz
 cd ../..
 ```
 
-6. Download corresponding pipeline.config from [this page](https://github.com/tensorflow/models/tree/master/research/object_detection/configs/tf2). In downloaded .config several changes must be made:
+6. Download corresponding pipeline configuration from [this page](https://github.com/tensorflow/models/tree/master/research/object_detection/configs/tf2). 
+```console
+wget https://raw.githubusercontent.com/tensorflow/models/master/research/object_detection/configs/tf2/ssd_resnet50_v1_fpn_640x640_coco17_tpu-8.config
+wget https://raw.githubusercontent.com/tensorflow/models/master/research/object_detection/configs/tf2/ssd_resnet50_v1_fpn_1024x1024_coco17_tpu-8.config
+wget https://raw.githubusercontent.com/tensorflow/models/master/research/object_detection/configs/tf2/faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8.config
+```
+In downloaded .config several changes must be made:
 - In the ```train_config``` section ```fine_tune_checkpoint_type``` must be set to ```"detection"``` instead of ```"classification"```
 - In the ```train_config``` section ```use_bfloat16``` must be set to ```false```
 - File must be renamed to ```pipeline.config```
@@ -66,7 +72,7 @@ python edit_config.py --train_dir data/waymo/train/ --eval_dir data/waymo/val/ -
 This command will produce ```pipeline_new.config``` file with correct input.
 Directories in the ```experiments``` folder already contain ```pipeline_new.config``` files for performed experiments. 
 
-7. Create new folder for the experiment and move created  pipeline_new.config to this folder.
+7. Create new folder for the experiment and move created  ```pipeline_new.config``` to this folder.
 ```console
 mkdir experiments/experiment1
 mv pipeline_new.config experiments/experiment1
@@ -130,7 +136,7 @@ This is done in order to have different files with cyclists for better generaliz
 This procedure is quite straightforward and it does not take into account another important factors, for example, diversity of weather and/or daytime conditions, but it tries to deal with imbalanced dataset. Another idea is that different ration between training and validation can be used (for example, 90/10), to have more data for training.
 
 ## Model training
-The training was performed on 1 Tesla K80 using Udacity workspace so there were some limitations on available disk space (3 GB) and total train time. 
+The training was performed on 1 Tesla K80 (12 GB) using Udacity workspace so there were some limitations on available disk space (3 GB), GPU memory and total train time. 
 
 ### Metrics summary
 Here all metrics are summarized for the performed experiments, the detailed description of each experiments is given below. 
@@ -281,6 +287,8 @@ Some other architectures were tested, but have not lead to meaningful results:
 - EfficientDet D4 1024x1024 - the batch size was reduced to 2, loss during training was wery noisy.
 - SSD Resnet 152 1024x1024 - the training process was unstable. Possibly, another optimizer/augmentations should be used.
 
+Another approach with per class metrics calculations was also tested, but it required pathcing Tensorflow code, which is unfortunately can not be done in the Udacity workspace.
+
 ### Test animations
 #### Segment 1
 
@@ -299,3 +307,7 @@ Some other architectures were tested, but have not lead to meaningful results:
 |--|--|
 |Exp. 1. SSD 640x640 <br /> <img src="assets/gifs/experiment1_animation3.gif" height="300">|Exp. 2. SSD 640x640 + augmentations <br /><img src="assets/gifs/experiment2_animation3.gif" height="300">|
 |Exp. 3. SSD 1024x1024 + augmentations<br /><img src="assets/gifs/experiment4_animation3.gif" height="300">|Exp. 4. Faster R-CNN 1024x1024 + augmentations<br /><img src="assets/gifs/experiment4_animation3.gif" height="300">|
+
+## Conclusions
+In this project Tensorflow Object Detection API was used to train a model for detecting cars, pedestrians and cyclists in an urban environment. 
+Two different architectures SSD and Faster R-CNN were used and showed similar performance. The usage of augmentations allowed achieving reasonable precision and recall even on a small dataset. 
