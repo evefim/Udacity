@@ -10,20 +10,29 @@ The goal of this project is to train 3-class Object detection model which is abl
 1. Clone the git repository to your local machine and go to the Project 1 directory 
 ```console
 git clone https://github.com/evefim/Udacity_Self-Driving_car.git
-cd Self-driving_car/Project_1
+cd Udacity_Self-Driving_car/Project_1
 ```
 
 2. In order to run the project the docker container is used. Build the image and run the container using the following commands:
 ```console
 cd build
 docker build -t project-dev -f Dockerfile .
-docker run --gpus all -v <local path to repository>/Self-driving_car/Project_1/:/app/project/ --network=host -ti project-dev bash
+docker run --gpus all -v <local path to repository>/Udacity_Self-Driving_car/Project_1/:/app/project/ --network=host -ti project-dev bash
 ```
 In my case local path to repository is ```/home/evgeny/udacity```.
 
 When the container is started go to the ```/app/project``` directory
 ```console
 cd /app/project
+```
+Once in container, you will need to install gsutil, which you can easily do by running:
+```console
+curl https://sdk.cloud.google.com | bash
+```
+
+Once gsutil is installed and added to your path, you can auth using:
+```console
+gcloud auth login
 ```
 
 3. Download the dataset using [download_process.py](download_process.py) script.
