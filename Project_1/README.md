@@ -39,7 +39,8 @@ gcloud auth login
 ```console
 python download_process.py --data_dir data/waymo --size 100
 ```
-This script will create ```train```, ```val```, ```training_and_validation``` and ```test``` directories, download 100 tfrecord files and put 3 of them to  ```test``` folder and remaining 97 files to ```training_and_validation``` folder.
+
+The following was tested on a Udacity-provided ```data/waymo``` folder  with ```train```, ```val```, ```training_and_validation``` and ```test``` directories, with downloaded 100 tfrecord files: 3 of them in the ```test``` folder and remaining 97 files in the ```training_and_validation``` folder.
 
 4. These 97 files should be splitted between ```train``` and ```val``` folders by running [create_splits.py](create_splits.py) script.
 ```console
